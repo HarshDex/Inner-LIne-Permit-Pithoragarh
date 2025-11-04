@@ -21,7 +21,6 @@ export default function Verify() {
           return;
         }
 
-        // Build full public Supabase URL (since bucket is public)
         const baseUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/uploads`;
         const fullUrl = `${baseUrl}/${data.storage_path}`;
         setImageUrl(fullUrl);

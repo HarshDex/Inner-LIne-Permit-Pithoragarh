@@ -8,7 +8,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} />
-      <Route path="/verify/IL-PASS-:ilp-:month-:year/:hash" element={<Verify />} />
+      <Route
+        path="/verify/:slug1-:ilp-:month-:year/:hash"
+        element={<Verify />}
+      />
     </Routes>
   </BrowserRouter>
 );
