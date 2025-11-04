@@ -54,7 +54,7 @@ export default function App() {
       return;
     }
 
-    const url = `https://pithoragarh.online/verify/IL-PASS-${ilp}-${month}-${year}/${hash}`;
+    const url = `https://pithorgarh.online/verify/IL-PASS-${ilp}-${month}-${year}/${hash}`;
     setLink(url);
     setUploading(false);
   }
