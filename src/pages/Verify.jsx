@@ -4,29 +4,33 @@ import { useParams } from "react-router-dom";
 
 export default function Verify() {
   const { hash } = useParams();
-  const [imageUrl, setImageUrl] = useState(null);
+const [imageUrl, setImageUrl] = useState(null);
 
-  useEffect(() => {
-    async function fetchImage() {
-      const { data, error } = await supabase
-        .from("passes")
-        .select("*")
-        .eq("random_hash", hash)
-        .single();
+useEffect(() => {
+  async function fetchImage() {
+    console.log("Checking hash:", hash);
+    const { data, error } = await supabase
+      .from("passes")
+      .select("*")
+      .eq("random_hash", hash)
+      .single();
 
-      if (error || !data) {
-        alert("Not found!");
-        return;
-      }
-
-      const { data: urlData } = await supabase.storage
-        .from("uploads")
-        .getPublicUrl(data.storage_path);
-
-      setImageUrl(urlData.publicUrl);
+    if (error || !data) {
+      console.error("Lookup error:", error);
+      alert("Invalid pass");
+      return;
     }
-    fetchImage();
-  }, [hash]);
+
+    const { data: publicUrlData } = supabase
+      .storage
+      .from("uploads")
+      .getPublicUrl(data.storage_path);
+
+    setImageUrl(publicUrlData.publicUrl);
+  }
+  fetchImage();
+}, [hash]);
+
 
   return (
     <div style={{ textAlign: "center", marginTop: 40 }}>
