@@ -1,35 +1,92 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { supabase } from "./supabaseClient";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function generateHash(len = 24) {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  return Array.from(crypto.getRandomValues(new Uint8Array(len)))
+    .map(x => chars[x % chars.length])
+    .join('');
 }
 
-export default App
+export default function App() {
+  const [ilp, setIlp] = useState("");
+  const [month, setMonth] = useState(1);
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [link, setLink] = useState(null);
+
+  async function handleUpload() {
+    if (!file || !ilp) return alert("Please fill all fields!");
+    setUploading(true);
+    const year = new Date().getFullYear();
+    const hash = generateHash(32);
+
+    // Generate storage path
+    const path = `IL-PASS-${ilp}/${year}-${month}/${hash}-${file.name}`;
+
+    // Upload to Supabase Storage
+    const { error: uploadError } = await supabase.storage
+      .from("uploads")
+      .upload(path, file);
+
+    if (uploadError) {
+      alert("Upload failed: " + uploadError.message);
+      setUploading(false);
+      return;
+    }
+
+    // Insert DB row
+    const { error: dbError } = await supabase.from("passes").insert([
+      {
+        ilp_number: ilp,
+        month,
+        year,
+        storage_path: path,
+        filename: file.name,
+        mime_type: file.type,
+        random_hash: hash,
+      },
+    ]);
+
+    if (dbError) {
+      alert("DB insert error: " + dbError.message);
+      setUploading(false);
+      return;
+    }
+
+    const url = `https://pithoragarh.online/verify/IL-PASS-${ilp}-${month}-${year}/${hash}`;
+    setLink(url);
+    setUploading(false);
+  }
+
+  return (
+    <div style={{ maxWidth: 500, margin: "40px auto", textAlign: "center" }}>
+      <h2>Create IL-PASS Link</h2>
+      <input
+        placeholder="Enter ILP Number"
+        value={ilp}
+        onChange={(e) => setIlp(e.target.value)}
+      />
+      <br />
+      <label>Month: </label>
+      <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
+        {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+          <option key={m}>{m}</option>
+        ))}
+      </select>
+      <br />
+      <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+      <br />
+      <button onClick={handleUpload} disabled={uploading}>
+        {uploading ? "Uploading..." : "Create Link"}
+      </button>
+
+      {link && (
+        <div style={{ marginTop: 20 }}>
+          ✅ Your link:<br />
+          <a href={link} target="_blank" rel="noreferrer">{link}</a>
+        </div>
+      )}
+    </div>
+  );
+}
