@@ -1,0 +1,92 @@
+.admin-wrapper {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 30px 30px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.08);
+  font-family: Arial;
+}
+
+.admin-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.admin-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.admin-btn:hover {
+  background: #125ca5;
+}
+
+/* FORM STYLING */
+.form-container {
+  max-width: 650px;
+  margin: 20px auto;
+  padding: 25px 30px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.08);
+  font-family: Arial;
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.form-container label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+}
+
+.form-container input,
+.form-container textarea,
+.form-container select {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 5px;
+}
+
+.submit-btn {
+  margin-top: 25px;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background: #2caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background: #239c45;
+}

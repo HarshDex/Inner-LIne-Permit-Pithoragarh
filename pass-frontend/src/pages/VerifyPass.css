@@ -1,0 +1,81 @@
+.pass-container {
+  max-width: 650px;
+  margin: 20px auto;
+  background: white;
+  padding: 10px 25px 40px 25px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-family: Arial, sans-serif;
+}
+
+.pass-top-image {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.pass-id {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.pass-name {
+  text-align: center;
+  font-size: 34px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.pass-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pass-left {
+  font-size: 14px;
+  line-height: 20px;
+  width: 60%;
+}
+
+.pass-qr {
+  width: 120px;
+  height: 120px;
+  background: #d9d9d9;
+  border-radius: 5px;
+}
+
+.pass-section {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.pass-valid {
+  margin-top: 25px;
+  background: #35c267;
+  color: white;
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.pass-signature {
+  width: 220px;
+  margin-top: 10px;
+}
+
+.pass-bottom-image {
+  width: 100%;
+  border-radius: 6px;
+  margin-top: 20px;
+}
+
+.pass-qr {
+  width: 140px;
+  height: 140px;
+  border-radius: 6px;
+  object-fit: cover;
+  margin-left: 20px;
+}
