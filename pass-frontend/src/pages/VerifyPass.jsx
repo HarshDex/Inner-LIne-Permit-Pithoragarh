@@ -1,18 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import QRCode from "qrcode";
 
 import "./VerifyPass.css";
 
 import topMountain from "../assets/topMountain.png";
 import signatureImg from "../assets/signature.png";
 import bottomMountain from "../assets/bottomMountain.png";
-import qrImg from "../assets/qr.png";
+import uttarakhandLogo from "../assets/uttarakhandLogo.png";
 
 
 export default function VerifyPass() {
+
+
   const { passId, token } = useParams();
   const [pass, setPass] = useState(null);
   const [error, setError] = useState("");
+  const [qrDataUrl, setQrDataUrl] = useState("");
+
+  const verifyUrl = `${window.location.origin}/verify/${passId}/${token}`;
+
+  QRCode.toDataURL(verifyUrl, {
+    margin: 0,
+    scale: 12,
+    color: {
+      dark: "#008000",   // green color EXACT like your sample
+      light: "#ffffff"   // white background
+    }
+  })
+  .then(url => setQrDataUrl(url));
+
+  function formatDate(dateString) {
+  const date = new Date(dateString);
+  const options = {
+    weekday: "short",   // Sat
+    month: "short",     // Nov
+    day: "numeric",     // 15
+    year: "numeric"     // 2025
+  };
+
+  const formatted = date.toLocaleString("en-US", options);
+  return `${formatted} 12:00 AM`;
+}
+
 
   useEffect(() => {
     async function loadPass() {
@@ -40,46 +70,48 @@ export default function VerifyPass() {
 
   return (
     <div className="pass-container">
-
+      <div className="pass-id-top">Inner Line Permit / {pass.passId}</div>
       <img src={topMountain} className="pass-top-image" />
-
       <div className="pass-id">{pass.passId}</div>
-
       <div className="pass-name">{pass.name}</div>
 
       <div className="pass-row">
+        <img src={uttarakhandLogo} className="uttarakhandLogo" alt="" />
         <div className="pass-left">
-          <div><b>C/O</b> {pass.co}</div>
-          <div style={{ whiteSpace: "pre-line" }}>{pass.address}</div>
-
+          <div>C/O {pass.co}</div>
+          <div style={{ whiteSpace: "pre-line" }} className="passAddress">{pass.address}</div>
+          <br></br>
           <div style={{ marginTop: 10 }}>
-            <b>PROFESSION:</b> {pass.profession || "OTHER"}
+            PROFESSION: {pass.profession || "OTHER"}
           </div>
-          <div><b>ID MARK:</b> {pass.idMark || "NONE"}</div>
-          <div><b>MOBILE:</b> {pass.mobile}</div>
+          <div>ID MARK: {pass.idMark || "NONE"}</div>
+          <div>MOBILE: {pass.mobile}</div>
         </div>
 
         {/* Placeholder for QR */}
-        <img src={qrImg} alt="QR Code" className="pass-qr" />
+        {qrDataUrl && (
+          <img src={qrDataUrl} alt="QR Code" className="pass-qr" />
+        )}
+
       </div>
 
       <div className="pass-section">
         <hr />
-        <div style={{ marginTop: 10, fontWeight: 600 }}>Pass Details</div>
+        <div className="pass-title">Pass Details</div>
 
-        <div style={{ fontSize: 14, marginTop: 5 }}>
-          Permission For : आदि कैलाश एवं ऊँ पर्वत Track for 4 Days
+        <div className="pass-permission">
+          Permission For : <b>आदि कैलाश एवं ऊँ पर्वत</b> Track for 4 Days
         </div>
 
-        <div style={{ fontSize: 14, marginTop: 5 }}>
-          <b>Issued From:</b> {pass.issuedFrom}
+        <div className="pass-issued">
+          <b>Issued From:</b> {formatDate(pass.issuedFrom)}
         </div>
 
-        <div style={{ fontSize: 14, marginTop: 5 }}>
-          <b>Validity:</b> {pass.validTill}
+        <div>
+          <b>Validity:</b> {formatDate(pass.validTill)}
         </div>
 
-        <div style={{ fontSize: 14, marginTop: 5 }}>
+        <div className="pass-authority">
           <b>ISSUING AUTHORITY:</b> SDM DHARCHULA 000000000
         </div>
       </div>
@@ -89,7 +121,6 @@ export default function VerifyPass() {
       <img src={signatureImg} className="pass-signature" />
 
       <img src={bottomMountain} className="pass-bottom-image" />
-
     </div>
   );
 }
