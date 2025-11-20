@@ -9,41 +9,39 @@ import signatureImg from "../assets/signature.png";
 import bottomMountain from "../assets/bottomMountain.png";
 import uttarakhandLogo from "../assets/uttarakhandLogo.png";
 
-
 export default function VerifyPass() {
-
-
   const { passId, token } = useParams();
   const [pass, setPass] = useState(null);
   const [error, setError] = useState("");
   const [qrDataUrl, setQrDataUrl] = useState("");
 
-  const verifyUrl = `${window.location.origin}/verify/${passId}/${token}`;
+  // -------------------------------
+  // EXPIRED CHECK FUNCTION
+  // -------------------------------
+  function isExpired(dateString) {
+    const today = new Date();
+    const validity = new Date(dateString);
+    return today > validity;
+  }
 
-  QRCode.toDataURL(verifyUrl, {
-    margin: 0,
-    scale: 12,
-    color: {
-      dark: "#008000",   // green color EXACT like your sample
-      light: "#ffffff"   // white background
-    }
-  })
-  .then(url => setQrDataUrl(url));
-
+  // -------------------------------
+  // CUSTOM DATE FORMATTER
+  // -------------------------------
   function formatDate(dateString) {
-  const date = new Date(dateString);
-  const options = {
-    weekday: "short",   // Sat
-    month: "short",     // Nov
-    day: "numeric",     // 15
-    year: "numeric"     // 2025
-  };
+    const date = new Date(dateString);
+    const options = {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    };
+    const formatted = date.toLocaleString("en-US", options);
+    return `${formatted} 12:00 AM`;
+  }
 
-  const formatted = date.toLocaleString("en-US", options);
-  return `${formatted} 12:00 AM`;
-}
-
-
+  // -------------------------------
+  // LOAD PASS DATA
+  // -------------------------------
   useEffect(() => {
     async function loadPass() {
       try {
@@ -65,22 +63,54 @@ export default function VerifyPass() {
     loadPass();
   }, [passId, token]);
 
+  // -------------------------------
+  // GENERATE QR AFTER PASS LOADS
+  // -------------------------------
+  useEffect(() => {
+    if (!pass) return;
+
+    const verifyUrl = `${window.location.origin}/verify/${passId}/${token}`;
+
+    QRCode.toDataURL(verifyUrl, {
+      margin: 0,
+      scale: 12,
+      color: {
+        dark: isExpired(pass.validTill) ? "#ff0000ff" : "#008000",
+        light: "#FFFFFF"
+      }
+    }).then(url => setQrDataUrl(url));
+  }, [pass]);
+
+  // -------------------------------
+  // STATE CHECKS
+  // -------------------------------
   if (error) return <div style={{ padding: 20, fontSize: 22 }}>{error}</div>;
   if (!pass) return <div style={{ padding: 20, fontSize: 22 }}>Loading…</div>;
 
+  // -------------------------------
+  // RETURN UI
+  // -------------------------------
   return (
     <div className="pass-container">
       <div className="pass-id-top">Inner Line Permit / {pass.passId}</div>
+
       <img src={topMountain} className="pass-top-image" />
+
       <div className="pass-id">{pass.passId}</div>
       <div className="pass-name">{pass.name}</div>
 
       <div className="pass-row">
         <img src={uttarakhandLogo} className="uttarakhandLogo" alt="" />
+
         <div className="pass-left">
           <div>C/O {pass.co}</div>
-          <div style={{ whiteSpace: "pre-line" }} className="passAddress">{pass.address}</div>
-          <br></br>
+          <div
+            style={{ whiteSpace: "pre-line" }}
+            className="passAddress"
+          >
+            {pass.address}
+          </div>
+          <br />
           <div style={{ marginTop: 10 }}>
             PROFESSION: {pass.profession || "OTHER"}
           </div>
@@ -88,38 +118,43 @@ export default function VerifyPass() {
           <div>MOBILE: {pass.mobile}</div>
         </div>
 
-        {/* Placeholder for QR */}
         {qrDataUrl && (
           <img src={qrDataUrl} alt="QR Code" className="pass-qr" />
         )}
-
       </div>
 
       <div className="pass-section">
-        <hr />
         <div className="pass-title">Pass Details</div>
+        <hr className="line" />
 
         <div className="pass-permission">
           Permission For : <b>आदि कैलाश एवं ऊँ पर्वत</b> Track for 4 Days
         </div>
 
         <div className="pass-issued">
-          <b>Issued From:</b> {formatDate(pass.issuedFrom)}
+          Issued From: {formatDate(pass.issuedFrom)}
         </div>
 
-        <div>
-          <b>Validity:</b> {formatDate(pass.validTill)}
+        <div style={{marginBottom: "15px",marginTop:"7px"}}>
+          Validity: {formatDate(pass.validTill)}
         </div>
 
         <div className="pass-authority">
-          <b>ISSUING AUTHORITY:</b> SDM DHARCHULA 000000000
+          ISSUING AUTHORITY: SDM DHARCHULA 000000000
         </div>
       </div>
 
-      <div className="pass-valid">VALID</div>
+      {/* VALID / EXPIRED BOX */}
+      <div
+        className="pass-valid"
+        style={{
+          background: isExpired(pass.validTill) ? "#E17B7D" : "#35c267"
+        }}
+      >
+        {isExpired(pass.validTill) ? "PASS EXPIRED" : "VALID"}
+      </div>
 
       <img src={signatureImg} className="pass-signature" />
-
       <img src={bottomMountain} className="pass-bottom-image" />
     </div>
   );

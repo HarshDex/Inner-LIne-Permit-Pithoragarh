@@ -37,6 +37,7 @@
   display: flex;
   justify-content: space-between;
   position: relative;
+  margin-bottom: 50px;
 }
 
 .pass-left {
@@ -107,7 +108,7 @@
   width : 180px;
   left : 10px;
   z-index: 1;
-  opacity: 0.4;
+  opacity: 0.2;
 }
 
 .pass-title {
@@ -120,7 +121,6 @@
 .pass-issued,
 .pass-valid,
 .pass-authority {
-  font-size: 15px;
   margin-top: 7px;
   margin-bottom: 15px;
 }
@@ -135,4 +135,54 @@
   margin-left: -80px;
   height: 100px;
   width: 200px;
+}
+
+.line{
+  color: rgb(34, 34, 34);
+  background-color: rgb(40, 40, 40);
+}
+
+
+/* responsive code */
+
+@media (max-width: 480px) {
+
+  .pass-container {
+    padding: 10px 15px 40px 15px;
+  }
+
+  .pass-id-top{
+    top: 27px;
+    font-size: .9em;
+  }
+
+  .pass-name {
+    font-size: 26px;
+  }
+
+  .pass-row {
+    align-items: center;
+  }
+
+  .pass-left {
+    width: 100%;
+  }
+
+  .pass-qr{
+    position: relative;
+    top: -35px;
+    height: 100px;
+
+  }
+
+
+  /* .pass-signature {
+    width: 200px;
+    margin-top: -40px;
+  } */
+
+  .pass-bottom-image {
+    left: 50%;
+    bottom: -15%;
+  }
 }
